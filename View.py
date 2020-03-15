@@ -62,37 +62,40 @@ class currentAndGoalBalance(tk.Frame):
         self.goalBalanceLabel.grid(row=1, column=0, sticky="N"+"E"+"S"+"W")
         self.goalBalanceEntry = tk.Entry(self, textvariable=self.goalBalanceData)
         self.goalBalanceEntry.grid(row=1, column=1, sticky="N"+"E"+"S"+"W")
-
-class Expense(tk.Frame): 
+        
+        self.exspense1 = Exspense(self)
+        self.exspense1.grid(row=0, column=0)
+        
+class Exspense(tk.Frame): 
     def __init__(self, parent=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
         
-        self.nameExpenseLabel = tk.Label(self, text="Name of Expense")
-        self.amountExpenseLabel = tk.Label(self, text="Amount for Expense")
-        self.timeframeExpenseLabel = tk.Label(self, text="Timeframe of Expense")
-        self.frequencyExpenseLabel = tk.Label(self, text="Frequency for Expense")
+        self.nameLabel = tk.Label(self, text="Name")
+        self.amountLabel = tk.Label(self, text="Amount")
+        self.timeframeLabel = tk.Label(self, text="Timeframe")
+        self.frequencyLabel = tk.Label(self, text="Frequency")
         
-        self.nameExpenseData = tk.StringVar()
-        self.amountExpenseData = tk.IntVar()
-        self.timeframeExpenseData = tk.StringVar()
-        self.frequencyExpenseData = tk.IntVar()        
+        self.nameData = tk.StringVar()
+        self.amountData = tk.IntVar()
+        self.timeframeData = tk.StringVar()
+        self.frequencyData = tk.IntVar()        
         
-        self.nameExpenseEntry = tk.Entry(self, textvariable=self.nameExpenseData)
-        self.amountExpenseEntry = tk.Entry(self, textvariable=self.amountExpenseData)
-        self.timeframeExpenseEntry = tk.OptionMenu(self, self.timeframeExpenseData, "Daily", "Weekly", "Monthly", "Yearly")
-        self.frequencyExpenseEntry = tk.Entry(self, textvariable=self.frequencyExpenseData)
+        self.nameEntry = tk.Entry(self, textvariable=self.nameData)
+        self.amountEntry = tk.Entry(self, textvariable=self.amountData)
+        self.timeframeEntry = tk.OptionMenu(self, self.timeframeData, "Daily", "Weekly", "Monthly", "Yearly")
+        self.frequencyEntry = tk.Entry(self, textvariable=self.frequencyData)
         
-        self.nameExpenseLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
-        self.nameExpenseEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
+        self.nameLabel.grid(row=0, column=0)
+        self.nameEntry.grid(row=0, column=1)
         
-        self.amountExpenseLabel.grid(row=0, column=2, sticky="N"+"E"+"S"+"W")
-        self.amountExpenseEntry.grid(row=0, column=3, sticky="N"+"E"+"S"+"W")
+        self.amountLabel.grid(row=0, column=2)
+        self.amountEntry.grid(row=0, column=3)
         
-        self.timeframeExpenseLabel.grid(row=0, column=4, sticky="N"+"E"+"S"+"W")
-        self.timeframeExpenseEntry.grid(row=0, column=5, sticky="N"+"E"+"S"+"W")
+        self.timeframeLabel.grid(row=0, column=4)
+        self.timeframeEntry.grid(row=0, column=5)
         
-        self.frequencyExpenseLabel.grid(row=0, column=6, sticky="N"+"E"+"S"+"W")
-        self.frequencyExpenseEntry.grid(row=0, column=7, sticky="N"+"E"+"S"+"W")
+        self.frequencyLabel.grid(row=0, column=6)
+        self.frequencyEntry.grid(row=0, column=7)
 
 class addExpense(tk.Frame):
     def __init__(self, parent=None, **configs):
