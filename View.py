@@ -5,9 +5,13 @@ from tkinter import messagebox
 class View(tk.Tk):
     """Applications root window"""
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, controller=None, account=None, *configs):
         """Code goes here"""
-        super().__init__(*args, **kwargs)
+        tk.Tk.__init__(self, *configs)
+        
+        self.controller = controller
+        
+        self.bankAccount = account
         
         #Below is code for the motherFrame
         self.motherFrame = tk.Frame(self)
@@ -15,29 +19,29 @@ class View(tk.Tk):
         #Need to add all frame classes for each feature into motherFrame
 
         #Menu not working for some reason, probably due to stacking it on motherFrame
-        '''
-        menu = Menu(self.motherFrame)
-        self.motherFrame.config(menu=menu)
+        
+        menu = tk.Menu(self.motherFrame)
+        self.config(menu=menu)
 
-        file = Menu(menu, tearoff=0)
+        file = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label='File: ', menu=file)
         #file.add_cascade(label='?')
         #Not sure what to add under File: menu
 
-        helpTab = Menu(menu, tearoff=0)
+        helpTab = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label='Help: ', menu=helpTab)
-        helpTab.add_cascade(label='About: ', command=lambda: messagebox.askokcancel("About: ", "Budget Buddy allows you to input your"/
+        helpTab.add_command(label='About: ', command=lambda: messagebox.askokcancel("About: ", "Budget Buddy allows you to input your"/
                                                                                     " income and then budgets your money based on expenses"/
                                                                                     " and how much you want to save by the end of a given"/
                                                                                     " timeframe."))
-        helpTab.add_cascade(label='Instructions: ', command=lambda: messagebox.askokcancel("Instructions: ", "Please input the period per"/
+        helpTab.add_command(label='Instructions: ', command=lambda: messagebox.askokcancel("Instructions: ", "Please input the period per"/
                                                                                     " expense you would like to budget yourself. Then add"/
                                                                                     " your expense, frequency of how often you pay for said"/
                                                                                     " expense, then with how much you would like to have saved"/
                                                                                     " by the end of the desired timeframe. Lastly, examine your"/
                                                                                     " visual representation of how much you would have to spend"/
                                                                                     " based on your desired denomination. You are able to save"/
-                                                                                    " your budget plan as well as open a new one."))'''
+                                                                                    " your budget plan as well as open a new one."))
         
 
 class currentAndGoalBalance(tk.Frame):
