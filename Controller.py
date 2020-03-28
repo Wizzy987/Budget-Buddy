@@ -6,12 +6,12 @@ class Controller():
         self.model=m()
         self.view=v(self, self.model.account)
         self.view.mainloop()
-        
+
     def save(self, filename):
         self.model.saveCSVFile(filename)
-    
+
     def load(self, filename):
-        self.model.loadCSVFile(filename)
-    
+        self.model.readCSVFile(filename)
+
 if __name__ == "__main__":
     c = Controller()

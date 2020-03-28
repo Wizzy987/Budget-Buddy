@@ -10,11 +10,23 @@ class BankAccount():
         self.plotBalance = []
         self.plotDay = []
 
-    def addExpense(self, expense):
+    def clear(self):
+        self.balance = 0
+        self.initial_balance = 0
+        self.goal = 0
+        self.expenses = []
+        self.incomes = []
+        self.plotBalance = []
+        self.plotDay = []
+        return
+
+    def addExpense(self, dataList):
+        expense = Datapoint(dataList[0], dataList[1], dataList[2], dataList[3])
         self.expenses.append(expense)
         return
 
-    def addIncome(self, income):
+    def addIncome(self, dataList):
+        income = Datapoint(dataList[0], dataList[1], dataList[2], dataList[3])
         self.incomes.append(income)
         return
 
@@ -61,6 +73,12 @@ class Datapoint():
         self.timeframe = timeframe
         self.frequency = frequency
 
+    def update(self, data):
+        self.name = data[0]
+        self.amount = data[1]
+        self.timeframe = data[2]
+        self.frequency = data[3]
+
 
 
 class Model():
@@ -84,6 +102,7 @@ class Model():
 
 
     def readCSVFile(self, fileName):
+        self.account.clear()
         with open(fileName, 'r', newline='') as load:
             reader = csv.reader(load)
             for row in reader:
@@ -92,8 +111,8 @@ class Model():
                 if row[0] == "Budget Goal":
                     self.account.setGoal(row[1])
                 if row[0] == "Expense":
-                    self.account.addExpense(Datapoint(row[1], row[2], row[3], row[4]))
+                    self.account.addExpense([row[1], row[2], row[3], row[4]])
                 if row[0] == "Income":
-                    self.account.addIncome(Datapoint(row[1], row[2], row[3], row[4]))
+                    self.account.addIncome([row[1], row[2], row[3], row[4]])
 
 
