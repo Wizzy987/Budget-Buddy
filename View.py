@@ -22,6 +22,8 @@ class View(tk.Tk):
         self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, padx=25, pady=25)
         self.accountBalanceFrame.grid(row=0, column=0, sticky="NSEW")
 
+
+        #Expenses attributes
         self.expenses = []
 
         self.expenseFrame = tk.Frame(self.motherFrame, bd=1, relief="raised")
@@ -31,6 +33,15 @@ class View(tk.Tk):
         self.addExpenseBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
 
 
+        #Incomes attributes
+        self.incomes = []
+
+        self.incomeFrame = tk.Frame(self.motherFrame, bd=1, relief="raised")
+        self.incomeFrame.grid(row=2, column=0, sticky="NSEW")
+
+        self.addIncomeBTN = tk.Button(self.incomeFrame, text="Add Income", padx=25, pady=25, command=self.addIncomeFrame)
+        self.addIncomeBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
+        
         #Menu Stuff
         menu = tk.Menu(self.motherFrame)
         self.config(menu=menu)
@@ -80,16 +91,28 @@ class View(tk.Tk):
         if response:
             f = filedialog.askopenfilename()
             if f:
+                #Calls the load function in controller.
                 self.controller.load(f)
+
+                #Sets the balance info to the account balance entries
                 self.accountBalanceFrame.currentBalanceData.set(self.account.balance)
                 self.accountBalanceFrame.goalBalanceData.set(self.account.goal)
 
+                #Destroys/Deletes the current income/expense frames in the window.
                 if self.expenses != []:
                     for index in range(0, len(self.expenses)):
                         self.expenses[index].destroy()
 
+
+                if self.incomes != []:
+                    for index in range(0, len(self.incomes)):
+                        self.incomes[index].destroy()
+
+                #Then clears the lists
+                self.incomes.clear()
                 self.expenses.clear()
 
+                #And finally fills both lists and the window with new income/expense frames
                 for index in range(0, len(self.account.expenses)):
                     self.addExpenseFrame()
                     self.expenses[index].nameExpenseData.set(self.account.expenses[index].name)
@@ -97,17 +120,41 @@ class View(tk.Tk):
                     self.expenses[index].timeframeExpenseData.set(self.account.expenses[index].timeframe)
                     self.expenses[index].frequencyExpenseData.set(self.account.expenses[index].frequency)
 
+
+                for index in range(0, len(self.account.incomes)):
+                    self.addIncomeFrame()
+                    self.incomes[index].nameIncomeData.set(self.account.incomes[index].name)
+                    self.incomes[index].amountIncomeData.set(self.account.incomes[index].amount)
+                    self.incomes[index].timeframeIncomeData.set(self.account.incomes[index].timeframe)
+                    self.incomes[index].frequencyIncomeData.set(self.account.incomes[index].frequency)
+
+                #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
         return
 
     def addExpenseFrame(self):
+
+        #Instantiated a new Expense as new
         new = Expense(self.expenseFrame, self, pady=25, padx=25)
+        #Adds new to the list of expenses
         self.expenses.append(new)
 
+        #Adds new to the model
         self.account.addExpense([new.nameExpenseData.get(), new.amountExpenseData.get(), new.timeframeExpenseData.get(), new.frequencyExpenseData.get()])
 
+        #Grids the expense frame onto the window
         new.grid(row=(len(self.expenses)-1), column=1, sticky="NSEW")
         self.addExpenseBTN.grid(row=len(self.expenses), column=1, sticky="NSEW")
+        return
+
+    def addIncomeFrame(self):
+        new = Income(self.incomeFrame, self, pady=25, padx=25)
+        self.incomes.append(new)
+
+        self.account.addIncome([new.nameIncomeData.get(), new.amountIncomeData.get(), new.timeframeIncomeData.get(), new.frequencyIncomeData.get()])
+
+        new.grid(row=(len(self.incomes)-1), column=1, sticky="NSEW")
+        self.addIncomeBTN.grid(row=len(self.incomes), column=1, sticky="NSEW")
         return
 
 
@@ -156,8 +203,10 @@ class Expense(tk.Frame):
         self.nameExpenseData = tk.StringVar()
         self.amountExpenseData = tk.IntVar()
         self.timeframeExpenseData = tk.StringVar()
-        self.timeframeExpenseData.set("daily")
+
+        self.timeframeExpenseData.set("Daily")
         self.frequencyExpenseData = tk.IntVar()
+        self.frequencyExpenseData.set(1)
 
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)
@@ -212,7 +261,7 @@ class Expense(tk.Frame):
 
 #tbh why is this a class? Also it's a frame?
 class addExpense(tk.Frame):
-    def __init__(self, parent=None, **configs):
+    def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
 
         self.addExpenseButton = Button(master, bg="white", fg="green", text="ADD Expense")
@@ -223,9 +272,15 @@ class addExpense(tk.Frame):
 
 
 #Make this class inherit from Expense. It'll make it easier
+#^ADDENDUM: Not sure exactly what you mean, good news is it appears the GUI is working as intended with this code
+##reference the week 5 lecture slides, since that has all the inheritance stuff in it.
+##inheritance makes the Income class inherit all the methods from Expense. would also allow you to use a generic __init__ so that we only need one
 class Income(tk.Frame):
-    def __init__(self, parent=None, **configs):
+    def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
+        
+        #Saves a reference to the root window, added "main=None" to init
+        self.rootWin = main
 
         self.nameIncomeLabel = tk.Label(self, text="Name of Income")
         self.amountIncomeLabel = tk.Label(self, text="Amount for Income")
@@ -235,7 +290,9 @@ class Income(tk.Frame):
         self.nameIncomeData = tk.StringVar()
         self.amountIncomeData = tk.IntVar()
         self.timeframeIncomeData = tk.StringVar()
+        self.timeframeIncomeData.set("Daily")
         self.frequencyIncomeData = tk.IntVar()
+        self.frequencyIncomeData.set(1)
 
         self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData)
         self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
@@ -253,6 +310,32 @@ class Income(tk.Frame):
 
         self.frequencyIncomeLabel.grid(row=0, column=6, sticky="N"+"E"+"S"+"W")
         self.frequencyIncomeEntry.grid(row=0, column=7, sticky="N"+"E"+"S"+"W")
+
+    def optionUpdate(self, *args):
+        self._update()
+        return
+
+    #General update function that updates
+    def _update(self):
+        index = self.rootWin.incomes.index(self)
+        self.rootWin.account.incomes[index].update(self.dataToList())
+        return True
+
+    def _validate(self, event):
+        if event == "key":
+            print(event)
+        if event == "focusout":
+            self._update()
+        return True
+
+    def dataToList(self):
+        data=[]
+        #Transfers data as [name, amount, timeframe, frequency]
+        data.append(self.nameIncomeData.get())
+        data.append(self.amountIncomeData.get())
+        data.append(self.timeframeIncomeData.get())
+        data.append(self.frequencyIncomeData.get())
+        return data
 
 class addIncome(tk.Frame):
     def __init__(self, parent=None, **configs):
