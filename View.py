@@ -199,8 +199,9 @@ class Expense(tk.Frame):
         self.nameExpenseData = tk.StringVar()
         self.amountExpenseData = tk.IntVar()
         self.timeframeExpenseData = tk.StringVar()
-        self.timeframeExpenseData.set("daily")
+        self.timeframeExpenseData.set("Daily")
         self.frequencyExpenseData = tk.IntVar()
+        self.frequencyExpenseData.set(1)
 
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)
@@ -281,7 +282,9 @@ class Income(tk.Frame):
         self.nameIncomeData = tk.StringVar()
         self.amountIncomeData = tk.IntVar()
         self.timeframeIncomeData = tk.StringVar()
+        self.timeframeIncomeData.set("Daily")
         self.frequencyIncomeData = tk.IntVar()
+        self.frequencyIncomeData.set(1)
 
         self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData)
         self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
