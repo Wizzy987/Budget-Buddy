@@ -41,7 +41,7 @@ class View(tk.Tk):
 
         self.addIncomeBTN = tk.Button(self.incomeFrame, text="Add Income", padx=25, pady=25, command=self.addIncomeFrame)
         self.addIncomeBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
-        
+
         #Menu Stuff
         menu = tk.Menu(self.motherFrame)
         self.config(menu=menu)
@@ -220,6 +220,10 @@ class Expense(tk.Frame):
         #Instead we just use trace, with a callback
         self.timeframeExpenseData.trace("w", self.optionUpdate)
 
+
+        self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
+        self.delete.grid(row=0, column=9, sticky="NE", padx=10)
+
         self.nameExpenseLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
         self.nameExpenseEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
@@ -258,17 +262,12 @@ class Expense(tk.Frame):
         data.append(self.frequencyExpenseData.get())
         return data
 
-
-#tbh why is this a class? Also it's a frame?
-class addExpense(tk.Frame):
-    def __init__(self, parent=None, main=None, **configs):
-        tk.Frame.__init__(self, parent, **configs)
-
-        self.addExpenseButton = Button(master, bg="white", fg="green", text="ADD Expense")
-        #^include after text, [command=self.addExpenseFrame]
-        #REFERENCE THIS FOR LATER
-        self.addExpenseButton.grid(row=0, column=0, columnspan=2, sticky="N"+"E"+"S"+"W")
-
+    def delete(self):
+        index = self.rootWin.expenses.index(self)
+        self.rootWin.account.expenses.pop(index)
+        self.rootWin.expenses.pop(index)
+        self.destroy()
+        return
 
 
 #Make this class inherit from Expense. It'll make it easier
@@ -278,7 +277,7 @@ class addExpense(tk.Frame):
 class Income(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
-        
+
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
@@ -298,6 +297,9 @@ class Income(tk.Frame):
         self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
         self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData)
+
+        self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
+        self.delete.grid(row=0, column=9, sticky="NE", padx=10)
 
         self.nameIncomeLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
         self.nameIncomeEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
@@ -337,14 +339,12 @@ class Income(tk.Frame):
         data.append(self.frequencyIncomeData.get())
         return data
 
-class addIncome(tk.Frame):
-    def __init__(self, parent=None, **configs):
-        tk.Frame.__init__(self, parent, **configs)
-
-        self.addIncomeButton = Button(master, bg="white", fg="green", text="ADD Income")
-        #^include after text, [command=self.addIncomeFrame]
-        #REFERENCE THIS FOR LATER
-        self.addIncomeButton.grid(row=0, column=0, columnspan=2, sticky="N"+"E"+"S"+"W")
+    def delete(self):
+        index = self.rootWin.incomes.index(self)
+        self.rootWin.account.incomes.pop(index)
+        self.rootWin.incomes.pop(index)
+        self.destroy()
+        return
 
 class infoGraph(tk.Frame):
     def __init__(self, parent=None, **configs):
