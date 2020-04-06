@@ -26,22 +26,22 @@ class View(tk.Tk):
         #Expenses attributes
         self.expenses = []
 
-        self.expenseFrame = tk.Frame(self.motherFrame, bd=1, relief="raised")
+        self.expenseFrame = ScrollableFrame(self.motherFrame)
         self.expenseFrame.grid(row=1, column=0, sticky="NSEW")
 
-        self.addExpenseBTN = tk.Button(self.expenseFrame, text="Add Expense", padx=25, pady=25, command=self.addExpenseFrame)
-        self.addExpenseBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
+        self.addExpenseBTN = tk.Button(self.motherFrame, text="Add Expense", padx=25, pady=25, command=self.addExpenseFrame)
+        self.addExpenseBTN.grid(row=2, column=0, sticky="NSEW")
 
 
         #Incomes attributes
         self.incomes = []
 
-        self.incomeFrame = tk.Frame(self.motherFrame, bd=1, relief="raised")
-        self.incomeFrame.grid(row=2, column=0, sticky="NSEW")
+        self.incomeFrame = ScrollableFrame(self.motherFrame)
+        self.incomeFrame.grid(row=3, column=0, sticky="NSEW")
 
-        self.addIncomeBTN = tk.Button(self.incomeFrame, text="Add Income", padx=25, pady=25, command=self.addIncomeFrame)
-        self.addIncomeBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
-        
+        self.addIncomeBTN = tk.Button(self.motherFrame, text="Add Income", padx=25, pady=25, command=self.addIncomeFrame)
+        self.addIncomeBTN.grid(row=4, column=0, columnspan=2, sticky="NSEW")
+
         #Menu Stuff
         menu = tk.Menu(self.motherFrame)
         self.config(menu=menu)
@@ -135,7 +135,7 @@ class View(tk.Tk):
     def addExpenseFrame(self):
 
         #Instantiated a new Expense as new
-        new = Expense(self.expenseFrame, self, pady=25, padx=25)
+        new = Expense(self.expenseFrame.scrollable_frame, self, pady=25, padx=25)
         #Adds new to the list of expenses
         self.expenses.append(new)
 
@@ -143,18 +143,16 @@ class View(tk.Tk):
         self.account.addExpense([new.nameExpenseData.get(), new.amountExpenseData.get(), new.timeframeExpenseData.get(), new.frequencyExpenseData.get()])
 
         #Grids the expense frame onto the window
-        new.grid(row=(len(self.expenses)-1), column=1, sticky="NSEW")
-        self.addExpenseBTN.grid(row=len(self.expenses), column=1, sticky="NSEW")
+        new.pack(side="top", expand="TRUE", fill="both")
         return
 
     def addIncomeFrame(self):
-        new = Income(self.incomeFrame, self, pady=25, padx=25)
+        new = Income(self.incomeFrame.scrollable_frame, self, pady=25, padx=25)
         self.incomes.append(new)
 
         self.account.addIncome([new.nameIncomeData.get(), new.amountIncomeData.get(), new.timeframeIncomeData.get(), new.frequencyIncomeData.get()])
 
         new.grid(row=(len(self.incomes)-1), column=1, sticky="NSEW")
-        self.addIncomeBTN.grid(row=len(self.incomes), column=1, sticky="NSEW")
         return
 
 
@@ -220,6 +218,10 @@ class Expense(tk.Frame):
         #Instead we just use trace, with a callback
         self.timeframeExpenseData.trace("w", self.optionUpdate)
 
+
+        self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
+        self.delete.grid(row=0, column=9, sticky="NE", padx=10)
+
         self.nameExpenseLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
         self.nameExpenseEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
@@ -258,17 +260,12 @@ class Expense(tk.Frame):
         data.append(self.frequencyExpenseData.get())
         return data
 
-
-#tbh why is this a class? Also it's a frame?
-class addExpense(tk.Frame):
-    def __init__(self, parent=None, main=None, **configs):
-        tk.Frame.__init__(self, parent, **configs)
-
-        self.addExpenseButton = Button(master, bg="white", fg="green", text="ADD Expense")
-        #^include after text, [command=self.addExpenseFrame]
-        #REFERENCE THIS FOR LATER
-        self.addExpenseButton.grid(row=0, column=0, columnspan=2, sticky="N"+"E"+"S"+"W")
-
+    def delete(self):
+        index = self.rootWin.expenses.index(self)
+        self.rootWin.account.expenses.pop(index)
+        self.rootWin.expenses.pop(index)
+        self.destroy()
+        return
 
 
 #Make this class inherit from Expense. It'll make it easier
@@ -278,7 +275,7 @@ class addExpense(tk.Frame):
 class Income(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
-        
+
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
@@ -298,6 +295,9 @@ class Income(tk.Frame):
         self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
         self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData)
+
+        self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
+        self.delete.grid(row=0, column=9, sticky="NE", padx=10)
 
         self.nameIncomeLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
         self.nameIncomeEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
@@ -337,14 +337,12 @@ class Income(tk.Frame):
         data.append(self.frequencyIncomeData.get())
         return data
 
-class addIncome(tk.Frame):
-    def __init__(self, parent=None, **configs):
-        tk.Frame.__init__(self, parent, **configs)
-
-        self.addIncomeButton = Button(master, bg="white", fg="green", text="ADD Income")
-        #^include after text, [command=self.addIncomeFrame]
-        #REFERENCE THIS FOR LATER
-        self.addIncomeButton.grid(row=0, column=0, columnspan=2, sticky="N"+"E"+"S"+"W")
+    def delete(self):
+        index = self.rootWin.incomes.index(self)
+        self.rootWin.account.incomes.pop(index)
+        self.rootWin.incomes.pop(index)
+        self.destroy()
+        return
 
 class infoGraph(tk.Frame):
     def __init__(self, parent=None, **configs):
@@ -352,3 +350,28 @@ class infoGraph(tk.Frame):
 
         #[Code here] for mathlib and pandas interaction for graph to appear
         #May need to make an additional frame for displaying the graph, unsure at this current time
+
+
+
+#The following class taken from
+#https://blog.tecladocode.com/tkinter-scrollable-frames/
+class ScrollableFrame(ttk.Frame):
+    def __init__(self, container, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        canvas = tk.Canvas(self, width=1000)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.scrollable_frame = ttk.Frame(canvas)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
