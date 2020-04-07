@@ -17,6 +17,11 @@ class View(tk.Tk):
         self.motherFrame.grid(row=0, column=0, columnspan=7)
         #Need to add all frame classes for each feature into motherFrame
 
+        #Test GUI for graph timeframe
+        self.timeframe = tk.StringVar()
+        self.timeframe.set("Daily")
+        self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
+        self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
 
         #Test GUI frames for save/load GUI
         self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, padx=25, pady=25)
@@ -31,6 +36,9 @@ class View(tk.Tk):
 
         self.addExpenseBTN = tk.Button(self.expenseFrame, text="Add Expense", padx=25, pady=25, command=self.addExpenseFrame)
         self.addExpenseBTN.grid(row=0, column=0, columnspan=2, sticky="NSEW")
+        
+        self.graphBTN = tk.Button(self.motherFrame, text="Graph", padx=25, pady=25, command=self.graph)
+        self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
 
 
         #Incomes attributes
@@ -131,6 +139,20 @@ class View(tk.Tk):
                 #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
         return
+    
+    def lengthInDays(self):
+        if self.timeframe.get() == "Day":
+            return 1
+        elif self.timeframe.get() == "Week":
+            return 7
+        elif self.timeframe.get() == "Month":
+            return 30
+        elif self.timeframe.get() == "Year":
+            return 365
+    
+    def graph(self):
+        length = self.lengthInDays()
+        self.account.graphBalance(length)
 
     def addExpenseFrame(self):
 
