@@ -1,4 +1,7 @@
 import csv
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class BankAccount():
     def __init__(self, *args):
@@ -31,39 +34,79 @@ class BankAccount():
         return
 
     def setBalance(self, balance):
-        self.initial_balance = balance
-        self.balance = balance
+        self.initial_balance = int(balance)
+        self.balance = int(balance)
         return
 
     def setGoal(self, goal):
         self.goal = goal
         return
+    
+    def getNetOutput(self):
+        net = int(self.balance) - int(self.initial_balance)
+        return net
+    
+    def getGoalOutput(self):
+        goal = int(self.balance) - int(self.goal)
+        return goal
 
     def graphBalance(self, length):
+        
+        print(self.initial_balance)
+        print(self.balance)
+        print(self.goal)
+        
+        for expense in self.expenses:
+            print(expense.amount)
+            print(expense.timeframe)
+        
         for days in range(0, length):
             for expense in self.expenses:
-                if expense.timeframe == "daily":
+                if expense.timeframe == "Daily":
                     self.balance -= (expense.amount*expense.frequency)
             for income in self.incomes:
-                if income.timeframe == "daily":
+                if income.timeframe == "Daily":
                     self.balance += (income.amount*income.frequency)
             if (days % 7) == 0:
                 for expense in self.expenses:
-                    if expense.timeframe == "weekly":
+                    if expense.timeframe == "Weekly":
                         self.balance -= (expense.amount*expense.frequency)
                 for income in self.incomes:
-                    if income.timeframe == "weekly":
+                    if income.timeframe == "Weekly":
                         self.balance += (income.amount*income.frequency)
             if (days % 30) == 0:
                 for expense in self.expenses:
-                    if expense.timeframe == "monthly":
+                    if expense.timeframe == "Monthly":
                         self.balance -= (expense.amount*expense.frequency)
                 for income in self.incomes:
-                    if income.timeframe == "monthly":
+                    if income.timeframe == "Monthly":
                         self.balance += (income.amount*income.frequency)
             self.plotBalance.append(self.balance)
             self.plotDay.append(days+1)
+            
+            self.renderGraph()
         return
+    
+    def renderGraph(self):
+        ## data
+        #r = np.random.randn(9)*80+range(1,10)
+        #print(r)
+        #print(type(r))
+        #df=pd.DataFrame({'x': range(1, 10), 'y': r})
+         
+        ## plot
+        #plt.plot('x', 'y', data=df, linestyle='-', marker='o')
+        #plt.show()
+        points = []
+        
+        for point in self.plotBalance:
+            points.append(point)
+        print(points)
+        
+        plt.plot(points)
+        plt.ylabel('Balance ($)')
+        plt.xlabel("Day Number")
+        plt.show()
 
 
 class Datapoint():

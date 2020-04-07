@@ -17,6 +17,40 @@ class View(tk.Tk):
         self.motherFrame.grid(row=0, column=0, columnspan=7)
         #Need to add all frame classes for each feature into motherFrame
 
+        #Test GUI for graph timeframe
+        self.timeframe = tk.StringVar()
+        self.timeframe.set("Day")
+        self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
+        self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
+        
+        self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=25, command=self.graph)
+        self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
+        
+        #Test GUI for output values
+        self.initialBalanceOutput = tk.IntVar()
+        self.finalBalanceOutput = tk.IntVar()
+        self.netOutput = tk.IntVar()
+        self.goalOutput = tk.IntVar()
+        
+        self.initialBalanceLabel = tk.Label(self, text="Initial Balance:")
+        self.initialBalanceValue = tk.Label(self, textvariable=self.initialBalanceOutput)
+        self.initialBalanceLabel.grid(row=4, column=0, sticky="NSEW")
+        self.initialBalanceValue.grid(row=4, column=1, sticky="NSEW")
+        
+        self.finalBalanceLabel = tk.Label(self, text="Final Balance:")
+        self.finalBalanceValue = tk.Label(self, textvariable=self.finalBalanceOutput)
+        self.finalBalanceLabel.grid(row=5, column=0, sticky="NSEW")
+        self.finalBalanceValue.grid(row=5, column=1, sticky="NSEW")
+        
+        self.netOutputLabel = tk.Label(self, text="Net Output:")
+        self.netOutputValue = tk.Label(self, textvariable=self.netOutput)
+        self.netOutputLabel.grid(row=6, column=0, sticky="NSEW")
+        self.netOutputValue.grid(row=6, column=1, sticky="NSEW")
+        
+        self.goalOutputLabel = tk.Label(self, text="Goal Output:")
+        self.goalOutputValue = tk.Label(self, textvariable=self.goalOutput)
+        self.goalOutputLabel.grid(row=7, column=0, sticky="NSEW")
+        self.goalOutputValue.grid(row=7, column=1, sticky="NSEW")
 
         #Test GUI frames for save/load GUI
         self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, self, padx=25, pady=25)
@@ -137,6 +171,26 @@ class View(tk.Tk):
                 #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
         return
+    
+    def lengthInDays(self):
+        if self.timeframe.get() == "Day":
+            return 1
+        elif self.timeframe.get() == "Week":
+            return 7
+        elif self.timeframe.get() == "Month":
+            return 30
+        elif self.timeframe.get() == "Year":
+            return 365
+    
+    def graph(self):
+        length = self.lengthInDays()
+        self.account.graphBalance(length)
+        
+        self.initialBalanceOutput.set(self.account.initial_balance)
+        self.finalBalanceOutput.set(self.account.balance)
+        self.netOutput.set(self.account.getNetOutput())
+        self.goalOutput.set(self.account.getGoalOutput())
+        return
 
     def addExpenseFrame(self):
 
@@ -202,6 +256,7 @@ class currentAndGoalBalance(tk.Frame):
             self._update()
         return True
 
+
 class Expense(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
@@ -214,10 +269,10 @@ class Expense(tk.Frame):
 
         #Suggestion: Rename these variable so that: 1. they'll be infinitely easier to type out (cause I'm into copy paste but it's still annoying)
         #and 2. it'll be easier to make income inherit from this class so that it's easier to just edit income
-        self.nameExpenseLabel = tk.Label(self, text="Name of Expense")
-        self.amountExpenseLabel = tk.Label(self, text="Amount for Expense")
-        self.timeframeExpenseLabel = tk.Label(self, text="Timeframe of Expense")
-        self.frequencyExpenseLabel = tk.Label(self, text="Frequency for Expense")
+        self.nameExpenseLabel = tk.Label(self, text="Name")
+        self.amountExpenseLabel = tk.Label(self, text="Amount")
+        self.timeframeExpenseLabel = tk.Label(self, text="Timeframe")
+        self.frequencyExpenseLabel = tk.Label(self, text="Frequency")
 
         self.nameExpenseData = tk.StringVar()
         self.amountExpenseData = tk.IntVar()
@@ -300,10 +355,10 @@ class Income(tk.Frame):
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
-        self.nameIncomeLabel = tk.Label(self, text="Name of Income")
-        self.amountIncomeLabel = tk.Label(self, text="Amount for Income")
-        self.timeframeIncomeLabel = tk.Label(self, text="Timeframe of Income")
-        self.frequencyIncomeLabel = tk.Label(self, text="Frequency for Income")
+        self.nameIncomeLabel = tk.Label(self, text="Name")
+        self.amountIncomeLabel = tk.Label(self, text="Amount")
+        self.timeframeIncomeLabel = tk.Label(self, text="Timeframe")
+        self.frequencyIncomeLabel = tk.Label(self, text="Frequency")
 
         self.nameIncomeData = tk.StringVar()
         self.amountIncomeData = tk.IntVar()
@@ -311,7 +366,7 @@ class Income(tk.Frame):
         self.timeframeIncomeData.set("Daily")
         self.frequencyIncomeData = tk.IntVar()
         self.frequencyIncomeData.set(1)
-
+        
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)
 
@@ -323,7 +378,6 @@ class Income(tk.Frame):
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
         #Instead we just use trace, with a callback
         self.timeframeIncomeData.trace("w", self.optionUpdate)
-
 
         self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
         self.delete.grid(row=0, column=9, sticky="NE", padx=10)
@@ -387,7 +441,7 @@ class infoGraph(tk.Frame):
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        canvas = tk.Canvas(self, width=1000)
+        canvas = tk.Canvas(self, height=200, width=1000)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
         self.scrollable_frame = ttk.Frame(canvas)
 

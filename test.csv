@@ -1,0 +1,9 @@
+Account Balance,0
+Budget Goal,0
+Type,Name,Amount,Time Frame,Frequency
+Expense,Food,30,Weekly,1
+Expense,Rent,200,Monthly,1
+Expense,,0,Daily,1
+Expense,,0,Daily,1
+Income,,0,Daily,1
+Income,,0,Daily,1
