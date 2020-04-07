@@ -19,7 +19,7 @@ class View(tk.Tk):
 
 
         #Test GUI frames for save/load GUI
-        self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, padx=25, pady=25)
+        self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, self, padx=25, pady=25)
         self.accountBalanceFrame.grid(row=0, column=0, sticky="NSEW")
 
 
@@ -114,7 +114,10 @@ class View(tk.Tk):
 
                 #And finally fills both lists and the window with new income/expense frames
                 for index in range(0, len(self.account.expenses)):
-                    self.addExpenseFrame()
+                    new = Expense(self.expenseFrame.scrollable_frame, self, pady=25, padx=25)
+                    self.expenses.append(new)
+                    new.pack(side="top", expand="TRUE", fill="both")
+
                     self.expenses[index].nameExpenseData.set(self.account.expenses[index].name)
                     self.expenses[index].amountExpenseData.set(self.account.expenses[index].amount)
                     self.expenses[index].timeframeExpenseData.set(self.account.expenses[index].timeframe)
@@ -122,7 +125,10 @@ class View(tk.Tk):
 
 
                 for index in range(0, len(self.account.incomes)):
-                    self.addIncomeFrame()
+                    new = Income(self.incomeFrame.scrollable_frame, self, pady=25, padx=25)
+                    self.incomes.append(new)
+                    new.pack(side="top", expand="TRUE", fill="both")
+
                     self.incomes[index].nameIncomeData.set(self.account.incomes[index].name)
                     self.incomes[index].amountIncomeData.set(self.account.incomes[index].amount)
                     self.incomes[index].timeframeIncomeData.set(self.account.incomes[index].timeframe)
@@ -152,13 +158,14 @@ class View(tk.Tk):
 
         self.account.addIncome([new.nameIncomeData.get(), new.amountIncomeData.get(), new.timeframeIncomeData.get(), new.frequencyIncomeData.get()])
 
-        new.grid(row=(len(self.incomes)-1), column=1, sticky="NSEW")
+        new.pack(side="top", expand="TRUE", fill="both")
         return
 
-
 class currentAndGoalBalance(tk.Frame):
-    def __init__(self, parent=None, **configs):
+    def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
+
+        self.rootWin = main
 
         self.currentBalanceData = tk.IntVar()
         self.goalBalanceData = tk.IntVar()
@@ -172,14 +179,28 @@ class currentAndGoalBalance(tk.Frame):
         self.currentBalanceLabel = tk.Label(self, text="Current Balance:")
         self.currentBalanceLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
 
+        self.valid = self.register(self._validate)
+
         #Remember to add _update on these entries like the ones below
-        self.currentBalanceEntry = tk.Entry(self, textvariable=self.currentBalanceData)
+        self.currentBalanceEntry = tk.Entry(self, textvariable=self.currentBalanceData, validate="all", validatecommand=(self.valid, "%V"))
         self.currentBalanceEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
         self.goalBalanceLabel = tk.Label(self, text="Goal Balance:")
         self.goalBalanceLabel.grid(row=1, column=0, sticky="N"+"E"+"S"+"W")
-        self.goalBalanceEntry = tk.Entry(self, textvariable=self.goalBalanceData)
+        self.goalBalanceEntry = tk.Entry(self, textvariable=self.goalBalanceData, validate="all", validatecommand=(self.valid, "%V"))
         self.goalBalanceEntry.grid(row=1, column=1, sticky="N"+"E"+"S"+"W")
+
+    def _update(self):
+        self.rootWin.account.setBalance(self.currentBalanceData.get())
+        self.rootWin.account.goal = self.goalBalanceData.get()
+        return True
+
+    def _validate(self, event):
+        if event == "key":
+            print(event)
+        if event == "focusout":
+            self._update()
+        return True
 
 class Expense(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
@@ -291,10 +312,18 @@ class Income(tk.Frame):
         self.frequencyIncomeData = tk.IntVar()
         self.frequencyIncomeData.set(1)
 
-        self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData)
-        self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
+        #Added a validation command, which calls an update command to update the same data in self.account
+        self.valid = self.register(self._validate)
+
+        self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+        self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+        self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+
+        #Option Menu is a bit trickier to implement with an update command, so it doesn't have a validate
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
-        self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData)
+        #Instead we just use trace, with a callback
+        self.timeframeIncomeData.trace("w", self.optionUpdate)
+
 
         self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
         self.delete.grid(row=0, column=9, sticky="NE", padx=10)
