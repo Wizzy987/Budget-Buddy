@@ -41,8 +41,20 @@ class BankAccount():
     def setGoal(self, goal):
         self.goal = goal
         return
+    
+    def getNetOutput(self):
+        net = int(self.balance) - int(self.initial_balance)
+        return net
+    
+    def getGoalOutput(self):
+        goal = int(self.balance) - int(self.goal)
+        return goal
 
     def graphBalance(self, length):
+        
+        print(self.initial_balance)
+        print(self.balance)
+        print(self.goal)
         
         for expense in self.expenses:
             print(expense.amount)
@@ -92,7 +104,8 @@ class BankAccount():
         print(points)
         
         plt.plot(points)
-        plt.ylabel('some numbers')
+        plt.ylabel('Balance ($)')
+        plt.xlabel("Day Number")
         plt.show()
 
 

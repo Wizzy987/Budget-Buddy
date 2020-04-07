@@ -19,12 +19,38 @@ class View(tk.Tk):
 
         #Test GUI for graph timeframe
         self.timeframe = tk.StringVar()
-        self.timeframe.set("Daily")
+        self.timeframe.set("Day")
         self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
         self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
+        
+        #Test GUI for output values
+        self.initialBalanceOutput = tk.IntVar()
+        self.finalBalanceOutput = tk.IntVar()
+        self.netOutput = tk.IntVar()
+        self.goalOutput = tk.IntVar()
+        
+        self.initialBalanceLabel = tk.Label(self, text="Initial Balance:")
+        self.initialBalanceValue = tk.Label(self, textvariable=self.initialBalanceOutput)
+        self.initialBalanceLabel.grid(row=4, column=0, sticky="NSEW")
+        self.initialBalanceValue.grid(row=4, column=1, sticky="NSEW")
+        
+        self.finalBalanceLabel = tk.Label(self, text="Final Balance:")
+        self.finalBalanceValue = tk.Label(self, textvariable=self.finalBalanceOutput)
+        self.finalBalanceLabel.grid(row=5, column=0, sticky="NSEW")
+        self.finalBalanceValue.grid(row=5, column=1, sticky="NSEW")
+        
+        self.netOutputLabel = tk.Label(self, text="Net Output:")
+        self.netOutputValue = tk.Label(self, textvariable=self.netOutput)
+        self.netOutputLabel.grid(row=6, column=0, sticky="NSEW")
+        self.netOutputValue.grid(row=6, column=1, sticky="NSEW")
+        
+        self.goalOutputLabel = tk.Label(self, text="Goal Output:")
+        self.goalOutputValue = tk.Label(self, textvariable=self.goalOutput)
+        self.goalOutputLabel.grid(row=7, column=0, sticky="NSEW")
+        self.goalOutputValue.grid(row=7, column=1, sticky="NSEW")
 
         #Test GUI frames for save/load GUI
-        self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, padx=25, pady=25)
+        self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, self, padx=25, pady=25)
         self.accountBalanceFrame.grid(row=0, column=0, sticky="NSEW")
 
 
@@ -153,6 +179,12 @@ class View(tk.Tk):
     def graph(self):
         length = self.lengthInDays()
         self.account.graphBalance(length)
+        
+        self.initialBalanceOutput.set(self.account.initial_balance)
+        self.finalBalanceOutput.set(self.account.balance)
+        self.netOutput.set(self.account.getNetOutput())
+        self.goalOutput.set(self.account.getGoalOutput())
+        return
 
     def addExpenseFrame(self):
 
@@ -181,8 +213,10 @@ class View(tk.Tk):
 
 
 class currentAndGoalBalance(tk.Frame):
-    def __init__(self, parent=None, **configs):
+    def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
+
+        self.rootWin = main
 
         self.currentBalanceData = tk.IntVar()
         self.goalBalanceData = tk.IntVar()
@@ -196,14 +230,30 @@ class currentAndGoalBalance(tk.Frame):
         self.currentBalanceLabel = tk.Label(self, text="Current Balance:")
         self.currentBalanceLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
 
+        self.valid = self.register(self._validate)
+
         #Remember to add _update on these entries like the ones below
-        self.currentBalanceEntry = tk.Entry(self, textvariable=self.currentBalanceData)
+        self.currentBalanceEntry = tk.Entry(self, textvariable=self.currentBalanceData, validate="all", validatecommand=(self.valid, "%V"))
         self.currentBalanceEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
         self.goalBalanceLabel = tk.Label(self, text="Goal Balance:")
         self.goalBalanceLabel.grid(row=1, column=0, sticky="N"+"E"+"S"+"W")
-        self.goalBalanceEntry = tk.Entry(self, textvariable=self.goalBalanceData)
+        self.goalBalanceEntry = tk.Entry(self, textvariable=self.goalBalanceData, validate="all", validatecommand=(self.valid, "%V"))
         self.goalBalanceEntry.grid(row=1, column=1, sticky="N"+"E"+"S"+"W")
+
+    def _update(self):
+        self.rootWin.account.setBalance(self.currentBalanceData.get())
+        self.rootWin.account.goal = self.goalBalanceData.get()
+        return True
+
+    def _validate(self, event):
+        if event == "key":
+            print(event)
+        if event == "focusout":
+            self._update()
+        return True
+        
+    
 
 class Expense(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
@@ -315,11 +365,18 @@ class Income(tk.Frame):
         self.timeframeIncomeData.set("Daily")
         self.frequencyIncomeData = tk.IntVar()
         self.frequencyIncomeData.set(1)
+        
+        #Added a validation command, which calls an update command to update the same data in self.account
+        self.valid = self.register(self._validate)
 
-        self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData)
-        self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData)
+        self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+        self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+        self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData, validate="all", validatecommand=(self.valid, "%V"))
+
+        #Option Menu is a bit trickier to implement with an update command, so it doesn't have a validate
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
-        self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData)
+        #Instead we just use trace, with a callback
+        self.timeframeIncomeData.trace("w", self.optionUpdate)
 
         self.nameIncomeLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
         self.nameIncomeEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
