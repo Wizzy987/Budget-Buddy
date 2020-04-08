@@ -454,14 +454,14 @@ class infoGraph(tk.Frame):
         #[Code here] for mathlib and pandas interaction for graph to appear
         #May need to make an additional frame for displaying the graph, unsure at this current time
         
-        graphTitle = tk.Label(self, text="Account Balance Over Time")
-        graphTitle.pack(side="top")
-        
         self.amounts = amounts
         self.days = days
         
-        f = Figure(figsize=(5, 5), dpi=100, frameon=False)
+        f = Figure(figsize=(8, 7), dpi=100, frameon=False)
         a = f.add_subplot(111)
+        a.set_title("Account Balance Over Time")
+        a.set_ylabel("Account Balance ($)")
+        a.set_xlabel("Days Elapsed")
         a.plot(self.days, self.amounts)
         
         canvas = FigureCanvasTkAgg(f, master=self)
