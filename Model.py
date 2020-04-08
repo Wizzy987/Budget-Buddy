@@ -1,7 +1,4 @@
 import csv
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 class BankAccount():
     def __init__(self, *args):
@@ -51,15 +48,6 @@ class BankAccount():
         return goal
 
     def graphBalance(self, length):
-        
-        print(self.initial_balance)
-        print(self.balance)
-        print(self.goal)
-        
-        for expense in self.expenses:
-            print(expense.amount)
-            print(expense.timeframe)
-        
         for days in range(0, length):
             for expense in self.expenses:
                 if expense.timeframe == "Daily":
@@ -83,30 +71,6 @@ class BankAccount():
                         self.balance += (income.amount*income.frequency)
             self.plotBalance.append(self.balance)
             self.plotDay.append(days+1)
-            
-            #self.renderGraph()
-        return
-    
-    def renderGraph(self):
-        ## data
-        #r = np.random.randn(9)*80+range(1,10)
-        #print(r)
-        #print(type(r))
-        #df=pd.DataFrame({'x': range(1, 10), 'y': r})
-         
-        ## plot
-        #plt.plot('x', 'y', data=df, linestyle='-', marker='o')
-        #plt.show()
-        points = []
-        
-        for point in self.plotBalance:
-            points.append(point)
-        print(points)
-        
-        plt.plot(points)
-        plt.ylabel('Balance ($)')
-        plt.xlabel("Day Number")
-        plt.show()
         return
         
     def getPlotBalance(self):
@@ -121,7 +85,6 @@ class BankAccount():
             days.append(day)
         return days
 
-
 class Datapoint():
     def __init__(self, name, amount, timeframe, frequency):
         self.name = name
@@ -134,8 +97,6 @@ class Datapoint():
         self.amount = data[1]
         self.timeframe = data[2]
         self.frequency = data[3]
-
-
 
 class Model():
     def __init__(self):

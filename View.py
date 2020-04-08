@@ -1,12 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-
-import matplotlib
-
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
-
-
 
 class View(tk.Tk):
     """Applications root window"""
@@ -275,8 +270,8 @@ class currentAndGoalBalance(tk.Frame):
         return True
 
     def _validate(self, event):
-        if event == "key":
-            print(event)
+        #if event == "key":
+            #print(event)
         if event == "focusout":
             self._update()
         return True
@@ -346,8 +341,8 @@ class Expense(tk.Frame):
         return True
 
     def _validate(self, event):
-        if event == "key":
-            print(event)
+        #if event == "key":
+            #print(event)
         if event == "focusout":
             self._update()
         return True
@@ -430,8 +425,8 @@ class Income(tk.Frame):
         return True
 
     def _validate(self, event):
-        if event == "key":
-            print(event)
+        #if event == "key":
+            #print(event)
         if event == "focusout":
             self._update()
         return True
