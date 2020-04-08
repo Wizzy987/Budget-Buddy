@@ -84,7 +84,7 @@ class BankAccount():
             self.plotBalance.append(self.balance)
             self.plotDay.append(days+1)
             
-            self.renderGraph()
+            #self.renderGraph()
         return
     
     def renderGraph(self):
@@ -107,6 +107,19 @@ class BankAccount():
         plt.ylabel('Balance ($)')
         plt.xlabel("Day Number")
         plt.show()
+        return
+        
+    def getPlotBalance(self):
+        points = []
+        for point in self.plotBalance:
+            points.append(point)
+        return points
+            
+    def getPlotDay(self):
+        days = []
+        for day in self.plotDay:
+            days.append(day)
+        return days
 
 
 class Datapoint():

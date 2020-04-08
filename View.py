@@ -1,6 +1,13 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
+import matplotlib
+
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.figure import Figure
+
+
+
 class View(tk.Tk):
     """Applications root window"""
 
@@ -183,8 +190,20 @@ class View(tk.Tk):
             return 365
     
     def graph(self):
+        
+        self.account.plotBalance = []
+        self.account.plotDay = []
+        
         length = self.lengthInDays()
         self.account.graphBalance(length)
+        
+        amounts = self.account.getPlotBalance()
+        days = self.account.getPlotDay()        
+        
+        graphWindow = tk.Tk()
+        graphWindow.title("Charted Balance")
+        chart = infoGraph(graphWindow, amounts, days)
+        chart.pack(side="top")
         
         self.initialBalanceOutput.set(self.account.initial_balance)
         self.finalBalanceOutput.set(self.account.balance)
@@ -428,14 +447,31 @@ class Income(tk.Frame):
         return
 
 class infoGraph(tk.Frame):
-    def __init__(self, parent=None, **configs):
+    def __init__(self, parent=None, amounts=None, days=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
 
         #[Code here] for mathlib and pandas interaction for graph to appear
         #May need to make an additional frame for displaying the graph, unsure at this current time
-
-
-
+        
+        graphTitle = tk.Label(self, text="Account Balance Over Time")
+        graphTitle.pack(side="top")
+        
+        self.amounts = amounts
+        self.days = days
+        
+        f = Figure(figsize=(5, 5), dpi=100, frameon=False)
+        a = f.add_subplot(111)
+        a.plot(self.days, self.amounts)
+        
+        canvas = FigureCanvasTkAgg(f, master=self)
+        canvas.draw()
+        
+        toolbar = NavigationToolbar2Tk(canvas, self)
+        toolbar.update()
+        
+        canvas.get_tk_widget().pack(side="top", fill="both", expand=1)
+        return
+        
 #The following class taken from
 #https://blog.tecladocode.com/tkinter-scrollable-frames/
 class ScrollableFrame(ttk.Frame):
