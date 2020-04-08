@@ -23,7 +23,7 @@ class View(tk.Tk):
         self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
         self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
         
-        self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=25, command=self.graph)
+        self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=15, command=self.graph)
         self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
         
         #Test GUI for output values
@@ -39,18 +39,18 @@ class View(tk.Tk):
         
         self.finalBalanceLabel = tk.Label(self, text="Final Balance:")
         self.finalBalanceValue = tk.Label(self, textvariable=self.finalBalanceOutput)
-        self.finalBalanceLabel.grid(row=5, column=0, sticky="NSEW")
-        self.finalBalanceValue.grid(row=5, column=1, sticky="NSEW")
+        self.finalBalanceLabel.grid(row=4, column=2, sticky="NSEW")
+        self.finalBalanceValue.grid(row=4, column=3, sticky="NSEW")
         
-        self.netOutputLabel = tk.Label(self, text="Net Output:")
+        self.netOutputLabel = tk.Label(self, text="Net Gain/Loss:")
         self.netOutputValue = tk.Label(self, textvariable=self.netOutput)
-        self.netOutputLabel.grid(row=6, column=0, sticky="NSEW")
-        self.netOutputValue.grid(row=6, column=1, sticky="NSEW")
-        
-        self.goalOutputLabel = tk.Label(self, text="Goal Output:")
+        self.netOutputLabel.grid(row=4, column=4, sticky="NSEW")
+        self.netOutputValue.grid(row=4, column=5, sticky="NSEW")
+    
+        self.goalOutputLabel = tk.Label(self, text="Goal Difference:")
         self.goalOutputValue = tk.Label(self, textvariable=self.goalOutput)
-        self.goalOutputLabel.grid(row=7, column=0, sticky="NSEW")
-        self.goalOutputValue.grid(row=7, column=1, sticky="NSEW")
+        self.goalOutputLabel.grid(row=4, column=6, sticky="NSEW")
+        self.goalOutputValue.grid(row=4, column=7, sticky="NSEW")
 
         #Test GUI frames for save/load GUI
         self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, self, padx=25, pady=25)
@@ -59,22 +59,28 @@ class View(tk.Tk):
 
         #Expenses attributes
         self.expenses = []
-
+        
+        self.expenseLabel = tk.Label(self.motherFrame, text="EXPENSES")
+        self.expenseLabel.grid(row=1, column=0)
+        
         self.expenseFrame = ScrollableFrame(self.motherFrame)
-        self.expenseFrame.grid(row=1, column=0, sticky="NSEW")
+        self.expenseFrame.grid(row=2, column=0, sticky="NSEW")
 
-        self.addExpenseBTN = tk.Button(self.motherFrame, text="Add Expense", padx=25, pady=25, command=self.addExpenseFrame)
-        self.addExpenseBTN.grid(row=2, column=0, sticky="NSEW")
+        self.addExpenseBTN = tk.Button(self.motherFrame, text="Add Expense", padx=25, pady=15, command=self.addExpenseFrame)
+        self.addExpenseBTN.grid(row=3, column=0, sticky="NSEW")
 
 
         #Incomes attributes
         self.incomes = []
+        
+        self.incomeLabel = tk.Label(self.motherFrame, text="INCOME")
+        self.incomeLabel.grid(row=4, column=0)        
 
         self.incomeFrame = ScrollableFrame(self.motherFrame)
-        self.incomeFrame.grid(row=3, column=0, sticky="NSEW")
+        self.incomeFrame.grid(row=5, column=0, sticky="NSEW")
 
-        self.addIncomeBTN = tk.Button(self.motherFrame, text="Add Income", padx=25, pady=25, command=self.addIncomeFrame)
-        self.addIncomeBTN.grid(row=4, column=0, columnspan=2, sticky="NSEW")
+        self.addIncomeBTN = tk.Button(self.motherFrame, text="Add Income", padx=25, pady=15, command=self.addIncomeFrame)
+        self.addIncomeBTN.grid(row=6, column=0, columnspan=2, sticky="NSEW")
 
         #Menu Stuff
         menu = tk.Menu(self.motherFrame)
@@ -441,7 +447,7 @@ class infoGraph(tk.Frame):
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        canvas = tk.Canvas(self, height=200, width=1000)
+        canvas = tk.Canvas(self, height=150, width=1000)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
         self.scrollable_frame = ttk.Frame(canvas)
 
