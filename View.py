@@ -20,10 +20,19 @@ class View(tk.Tk):
         #Need to add all frame classes for each feature into motherFrame
 
         #Test GUI for graph timeframe
+        self.timeframeLabel = tk.Label(self, text="Select Time Interval:")
         self.timeframe = tk.StringVar()
         self.timeframe.set("Day")
         self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
-        self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
+        self.timeframeLabel.grid(row=2, column=0, sticky="NSEW")
+        self.timeframeMenu.grid(row=2, column=1, sticky="NSEW")
+        
+        self.repeatsLabel = tk.Label(self, text="Repeat Interval:")
+        self.repeats = tk.IntVar()
+        self.repeats.set(1)
+        self.repeatsBTN = tk.Entry(self, textvariable=self.repeats)
+        self.repeatsLabel.grid(row=2, column=2, sticky="NSEW")
+        self.repeatsBTN.grid(row=2, column=3, sticky="NSEW")
         
         self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=15, command=self.graph)
         self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
@@ -182,13 +191,13 @@ class View(tk.Tk):
     
     def lengthInDays(self):
         if self.timeframe.get() == "Day":
-            return 1
+            return 1 * self.repeats.get()
         elif self.timeframe.get() == "Week":
-            return 7
+            return 7 * self.repeats.get()
         elif self.timeframe.get() == "Month":
-            return 30
+            return 30 * self.repeats.get()
         elif self.timeframe.get() == "Year":
-            return 365
+            return 365 * self.repeats.get()
     
     def graph(self):
         
