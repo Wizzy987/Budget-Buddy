@@ -205,7 +205,7 @@ class View(tk.Tk):
             return 365 * self.repeats.get()
 
     def graph(self):
-
+        self.graphBTN.focus_set()
         self.account.plotBalance = []
         self.account.plotDay = []
 
