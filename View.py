@@ -206,6 +206,7 @@ class View(tk.Tk):
 
     def graph(self):
         self.graphBTN.focus_set()
+
         self.account.plotBalance = []
         self.account.plotDay = []
 
