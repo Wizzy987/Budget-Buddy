@@ -38,47 +38,48 @@ class BankAccount():
     def setGoal(self, goal):
         self.goal = goal
         return
-    
+
     def getNetOutput(self):
         net = int(self.balance) - int(self.initial_balance)
         return net
-    
+
     def getGoalOutput(self):
         goal = int(self.balance) - int(self.goal)
         return goal
 
     def graphBalance(self, length):
+        balance = self.balance
         for days in range(0, length):
             for expense in self.expenses:
                 if expense.timeframe == "Daily":
-                    self.balance -= (expense.amount*expense.frequency)
+                    balance -= (expense.amount*expense.frequency)
             for income in self.incomes:
                 if income.timeframe == "Daily":
-                    self.balance += (income.amount*income.frequency)
+                    balance += (income.amount*income.frequency)
             if (days % 7) == 0:
                 for expense in self.expenses:
                     if expense.timeframe == "Weekly":
-                        self.balance -= (expense.amount*expense.frequency)
+                        balance -= (expense.amount*expense.frequency)
                 for income in self.incomes:
                     if income.timeframe == "Weekly":
-                        self.balance += (income.amount*income.frequency)
+                        balance += (income.amount*income.frequency)
             if (days % 30) == 0:
                 for expense in self.expenses:
                     if expense.timeframe == "Monthly":
-                        self.balance -= (expense.amount*expense.frequency)
+                        balance -= (expense.amount*expense.frequency)
                 for income in self.incomes:
                     if income.timeframe == "Monthly":
-                        self.balance += (income.amount*income.frequency)
-            self.plotBalance.append(self.balance)
+                        balance += (income.amount*income.frequency)
+            self.plotBalance.append(balance)
             self.plotDay.append(days+1)
         return
-        
+
     def getPlotBalance(self):
         points = []
         for point in self.plotBalance:
             points.append(point)
         return points
-            
+
     def getPlotDay(self):
         days = []
         for day in self.plotDay:
