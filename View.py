@@ -222,7 +222,7 @@ class View(tk.Tk):
         chart.pack(side="top")
 
         self.initialBalanceOutput.set(self.account.initial_balance)
-        self.finalBalanceOutput.set(self.account.balance)
+        self.finalBalanceOutput.set(self.account.plotBalance[len(self.account.plotBalance) -1])
         self.netOutput.set(self.account.getNetOutput())
         self.goalOutput.set(self.account.getGoalOutput())
         return
