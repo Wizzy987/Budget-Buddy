@@ -136,7 +136,7 @@ class View(tk.Tk):
         return
 
     def save(self):
-        f = filedialog.asksaveasfilename(filetypes=[("Excel spreadsheet", "*.csv")])
+        f = filedialog.asksaveasfilename(filetypes=[("Excel spreadsheet", "*.csv")], defaultextension=".csv")
         if f:
             self.controller.save(f)
             messagebox.showinfo("File Save", "Budget saved to " + f)
