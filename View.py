@@ -187,10 +187,10 @@ class View(tk.Tk):
                     self.expenses.append(new)
                     new.pack(side="top", expand="TRUE", fill="both")
 
-                    self.expenses[index].nameExpenseData.set(self.account.expenses[index].name)
-                    self.expenses[index].amountExpenseData.set(self.account.expenses[index].amount)
-                    self.expenses[index].timeframeExpenseData.set(self.account.expenses[index].timeframe)
-                    self.expenses[index].frequencyExpenseData.set(self.account.expenses[index].frequency)
+                    self.expenses[index].nameData.set(self.account.expenses[index].name)
+                    self.expenses[index].amountData.set(self.account.expenses[index].amount)
+                    self.expenses[index].timeframeData.set(self.account.expenses[index].timeframe)
+                    self.expenses[index].frequencyData.set(self.account.expenses[index].frequency)
 
 
                 for index in range(0, len(self.account.incomes)):
@@ -198,10 +198,10 @@ class View(tk.Tk):
                     self.incomes.append(new)
                     new.pack(side="top", expand="TRUE", fill="both")
 
-                    self.incomes[index].nameIncomeData.set(self.account.incomes[index].name)
-                    self.incomes[index].amountIncomeData.set(self.account.incomes[index].amount)
-                    self.incomes[index].timeframeIncomeData.set(self.account.incomes[index].timeframe)
-                    self.incomes[index].frequencyIncomeData.set(self.account.incomes[index].frequency)
+                    self.incomes[index].nameData.set(self.account.incomes[index].name)
+                    self.incomes[index].amountData.set(self.account.incomes[index].amount)
+                    self.incomes[index].timeframeData.set(self.account.incomes[index].timeframe)
+                    self.incomes[index].frequencyData.set(self.account.incomes[index].frequency)
 
                 #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
@@ -220,7 +220,19 @@ class View(tk.Tk):
 
     #Code for graph output
     def graph(self):
+        #Focuses on self
         self.graphBTN.focus_set()
+
+        #Manually updates all the entries
+        self.accountBalanceFrame._update()
+
+        for expense in self.expenses:
+            expense._update()
+
+        for income in self.incomes:
+            income._update()
+
+        #Graph Setup and Output
 
         self.account.plotBalance = []
         self.account.plotDay = []
@@ -311,29 +323,29 @@ class Expense(tk.Frame):
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
-        self.nameExpenseLabel = tk.Label(self, text="Name")
-        self.amountExpenseLabel = tk.Label(self, text="Amount")
-        self.timeframeExpenseLabel = tk.Label(self, text="Timeframe")
-        self.frequencyExpenseLabel = tk.Label(self, text="Frequency")
+        self.nameLabel = tk.Label(self, text="Name")
+        self.amountLabel = tk.Label(self, text="Amount")
+        self.timeframeLabel = tk.Label(self, text="Timeframe")
+        self.frequencyLabel = tk.Label(self, text="Frequency")
 
-        self.nameExpenseData = tk.StringVar()
-        self.amountExpenseData = tk.IntVar()
-        self.timeframeExpenseData = tk.StringVar()
+        self.nameData = tk.StringVar()
+        self.amountData = tk.IntVar()
+        self.timeframeData = tk.StringVar()
 
-        self.timeframeExpenseData.set("Daily")
-        self.frequencyExpenseData = tk.IntVar()
-        self.frequencyExpenseData.set(1)
+        self.timeframeData.set("Daily")
+        self.frequencyData = tk.IntVar()
+        self.frequencyData.set(1)
 
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)
 
-        self.nameExpenseEntry = tk.Entry(self, textvariable=self.nameExpenseData, validate="all", validatecommand=(self.valid, "%V"))
-        self.amountExpenseEntry = tk.Entry(self, textvariable=self.amountExpenseData, validate="all", validatecommand=(self.valid, "%V"))
-        self.frequencyExpenseEntry = tk.Entry(self, textvariable=self.frequencyExpenseData, validate="all", validatecommand=(self.valid, "%V"))
+        self.nameEntry = tk.Entry(self, textvariable=self.nameData, validate="all", validatecommand=(self.valid, "%V"))
+        self.amountEntry = tk.Entry(self, textvariable=self.amountData, validate="all", validatecommand=(self.valid, "%V"))
+        self.frequencyEntry = tk.Entry(self, textvariable=self.frequencyData, validate="all", validatecommand=(self.valid, "%V"))
 
-        self.timeframeExpenseEntry = tk.OptionMenu(self, self.timeframeExpenseData, "Daily", "Weekly", "Monthly", "Yearly")
-        #Trace with a callback
-        self.timeframeExpenseData.trace("w", self.optionUpdate)
+        self.timeframeEntry = tk.OptionMenu(self, self.timeframeData, "Daily", "Weekly", "Monthly", "Yearly")
+        #Trace with callback
+        self.timeframeData.trace("w", self.optionUpdate)
 
 
         self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
@@ -383,76 +395,13 @@ class Expense(tk.Frame):
         self.destroy()
         return
 
-#Same process as Expense class
-class Income(tk.Frame):
-    def __init__(self, parent=None, main=None, **configs):
-        tk.Frame.__init__(self, parent, **configs)
-
-        #Saves a reference to the root window, added "main=None" to init
-        self.rootWin = main
-
-        self.nameIncomeLabel = tk.Label(self, text="Name")
-        self.amountIncomeLabel = tk.Label(self, text="Amount")
-        self.timeframeIncomeLabel = tk.Label(self, text="Timeframe")
-        self.frequencyIncomeLabel = tk.Label(self, text="Frequency")
-
-        self.nameIncomeData = tk.StringVar()
-        self.amountIncomeData = tk.IntVar()
-        self.timeframeIncomeData = tk.StringVar()
-        self.timeframeIncomeData.set("Daily")
-        self.frequencyIncomeData = tk.IntVar()
-        self.frequencyIncomeData.set(1)
-
-        #Added a validation command, which calls an update command to update the same data in self.account
-        self.valid = self.register(self._validate)
-
-        self.nameIncomeEntry = tk.Entry(self, textvariable=self.nameIncomeData, validate="all", validatecommand=(self.valid, "%V"))
-        self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData, validate="all", validatecommand=(self.valid, "%V"))
-        self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData, validate="all", validatecommand=(self.valid, "%V"))
-
-        self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
-        #Trace with a callback
-        self.timeframeIncomeData.trace("w", self.optionUpdate)
-
-        self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
-        self.delete.grid(row=0, column=9, sticky="NE", padx=10)
-
-        self.nameIncomeLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
-        self.nameIncomeEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
-
-        self.amountIncomeLabel.grid(row=0, column=2, sticky="N"+"E"+"S"+"W")
-        self.amountIncomeEntry.grid(row=0, column=3, sticky="N"+"E"+"S"+"W")
-
-        self.timeframeIncomeLabel.grid(row=0, column=4, sticky="N"+"E"+"S"+"W")
-        self.timeframeIncomeEntry.grid(row=0, column=5, sticky="N"+"E"+"S"+"W")
-
-        self.frequencyIncomeLabel.grid(row=0, column=6, sticky="N"+"E"+"S"+"W")
-        self.frequencyIncomeEntry.grid(row=0, column=7, sticky="N"+"E"+"S"+"W")
-
-    def optionUpdate(self, *args):
-        self._update()
-        return
-
+#Inherits from Expense class
+class Income(Expense):
     #General update function that updates
     def _update(self):
         index = self.rootWin.incomes.index(self)
         self.rootWin.account.incomes[index].update(self.dataToList())
         return True
-
-    def _validate(self, event):
-        #Validation for user input
-        if event == "focusout":
-            self._update()
-        return True
-
-    def dataToList(self):
-        data=[]
-        #Transfers data as [name, amount, timeframe, frequency]
-        data.append(self.nameIncomeData.get())
-        data.append(self.amountIncomeData.get())
-        data.append(self.timeframeIncomeData.get())
-        data.append(self.frequencyIncomeData.get())
-        return data
 
     def delete(self):
         index = self.rootWin.incomes.index(self)
