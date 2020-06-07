@@ -104,8 +104,8 @@ class Model():
         self.account = BankAccount()
 
     def saveCSVFile(self, fileName):
-        with open(fileName, 'w', newline='') as save:
-            writer = csv.writer(save)
+        with open(fileName, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
             writer.writerow(["Account Balance", self.account.balance])
             writer.writerow(["Budget Goal", self.account.goal])
@@ -121,8 +121,8 @@ class Model():
 
     def readCSVFile(self, fileName):
         self.account.clear()
-        with open(fileName, 'r', newline='') as load:
-            reader = csv.reader(load)
+        with open(fileName, 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
             for row in reader:
                 if row[0] == "Account Balance":
                     self.account.setBalance(row[1])

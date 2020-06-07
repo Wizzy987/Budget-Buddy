@@ -138,7 +138,7 @@ class View(tk.Tk):
         return
 
     def save(self):
-        f = filedialog.asksaveasfilename()
+        f = filedialog.asksaveasfilename(filetypes=[("Excel spreadsheet", "*.csv")], defaultextension=".csv")
         if f:
             self.controller.save(f)
             messagebox.showinfo("File Save", "Budget saved to " + f)
@@ -147,7 +147,7 @@ class View(tk.Tk):
     def load(self):
         response = messagebox.askyesno("Loading New File", "All unsaved changes will be lost. Load a budget from file?")
         if response:
-            f = filedialog.askopenfilename()
+            f = filedialog.askopenfilename(filetypes=[("Excel spreadsheet", "*.csv")])
             if f:
                 #Calls the load function in controller.
                 self.controller.load(f)
@@ -224,7 +224,7 @@ class View(tk.Tk):
         chart.pack(side="top")
 
         self.initialBalanceOutput.set(self.account.initial_balance)
-        self.finalBalanceOutput.set(self.account.balance)
+        self.finalBalanceOutput.set(self.account.plotBalance[len(self.account.plotBalance) -1])
         self.netOutput.set(self.account.getNetOutput())
         self.goalOutput.set(self.account.getGoalOutput())
         return
