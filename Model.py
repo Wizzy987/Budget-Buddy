@@ -40,11 +40,11 @@ class BankAccount():
         return
 
     def getNetOutput(self):
-        net = int(self.balance) - int(self.initial_balance)
+        net = int(self.plotBalance[len(self.plotBalance) - 1]) - int(self.initial_balance)
         return net
 
     def getGoalOutput(self):
-        goal = int(self.balance) - int(self.goal)
+        goal = int(self.plotBalance[len(self.plotBalance) - 1]) - int(self.goal)
         return goal
 
     def graphBalance(self, length):
