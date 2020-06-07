@@ -10,6 +10,8 @@ class View(tk.Tk):
         """Code goes here"""
         tk.Tk.__init__(self, *config)
 
+        self.title("Budget Buddy")
+
         self.controller = controller
 
         self.account = account
@@ -20,35 +22,44 @@ class View(tk.Tk):
         #Need to add all frame classes for each feature into motherFrame
 
         #Test GUI for graph timeframe
+        self.timeframeLabel = tk.Label(self, text="Select Time Interval:")
         self.timeframe = tk.StringVar()
         self.timeframe.set("Day")
         self.timeframeMenu = tk.OptionMenu(self, self.timeframe, "Day", "Week", "Month", "Year")
-        self.timeframeMenu.grid(row=2, column=0, sticky="NSEW")
-        
+        self.timeframeLabel.grid(row=2, column=0, sticky="NSEW")
+        self.timeframeMenu.grid(row=2, column=1, sticky="NSEW")
+
+        self.repeatsLabel = tk.Label(self, text="Repeat Interval:")
+        self.repeats = tk.IntVar()
+        self.repeats.set(1)
+        self.repeatsBTN = tk.Entry(self, textvariable=self.repeats)
+        self.repeatsLabel.grid(row=2, column=2, sticky="NSEW")
+        self.repeatsBTN.grid(row=2, column=3, sticky="NSEW")
+
         self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=15, command=self.graph)
         self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
-        
+
         #Test GUI for output values
         self.initialBalanceOutput = tk.IntVar()
         self.finalBalanceOutput = tk.IntVar()
         self.netOutput = tk.IntVar()
         self.goalOutput = tk.IntVar()
-        
+
         self.initialBalanceLabel = tk.Label(self, text="Initial Balance:")
         self.initialBalanceValue = tk.Label(self, textvariable=self.initialBalanceOutput)
         self.initialBalanceLabel.grid(row=4, column=0, sticky="NSEW")
         self.initialBalanceValue.grid(row=4, column=1, sticky="NSEW")
-        
+
         self.finalBalanceLabel = tk.Label(self, text="Final Balance:")
         self.finalBalanceValue = tk.Label(self, textvariable=self.finalBalanceOutput)
         self.finalBalanceLabel.grid(row=4, column=2, sticky="NSEW")
         self.finalBalanceValue.grid(row=4, column=3, sticky="NSEW")
-        
+
         self.netOutputLabel = tk.Label(self, text="Net Gain/Loss:")
         self.netOutputValue = tk.Label(self, textvariable=self.netOutput)
         self.netOutputLabel.grid(row=4, column=4, sticky="NSEW")
         self.netOutputValue.grid(row=4, column=5, sticky="NSEW")
-    
+
         self.goalOutputLabel = tk.Label(self, text="Goal Difference:")
         self.goalOutputValue = tk.Label(self, textvariable=self.goalOutput)
         self.goalOutputLabel.grid(row=4, column=6, sticky="NSEW")
@@ -61,10 +72,10 @@ class View(tk.Tk):
 
         #Expenses attributes
         self.expenses = []
-        
+
         self.expenseLabel = tk.Label(self.motherFrame, text="EXPENSES")
         self.expenseLabel.grid(row=1, column=0)
-        
+
         self.expenseFrame = ScrollableFrame(self.motherFrame)
         self.expenseFrame.grid(row=2, column=0, sticky="NSEW")
 
@@ -74,9 +85,9 @@ class View(tk.Tk):
 
         #Incomes attributes
         self.incomes = []
-        
+
         self.incomeLabel = tk.Label(self.motherFrame, text="INCOME")
-        self.incomeLabel.grid(row=4, column=0)        
+        self.incomeLabel.grid(row=4, column=0)
 
         self.incomeFrame = ScrollableFrame(self.motherFrame)
         self.incomeFrame.grid(row=5, column=0, sticky="NSEW")
@@ -119,6 +130,11 @@ class View(tk.Tk):
                 for index in range(0, len(self.expenses)):
                     self.expenses[index].destroy()
                 self.expenses.clear()
+
+            if self.incomes != []:
+                for index in range(0, len(self.incomes)):
+                    self.incomes[index].destroy()
+                self.incomes.clear()
         return
 
     def save(self):
@@ -179,33 +195,34 @@ class View(tk.Tk):
                 #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
         return
-    
+
     def lengthInDays(self):
         if self.timeframe.get() == "Day":
-            return 1
+            return 1 * self.repeats.get()
         elif self.timeframe.get() == "Week":
-            return 7
+            return 7 * self.repeats.get()
         elif self.timeframe.get() == "Month":
-            return 30
+            return 30 * self.repeats.get()
         elif self.timeframe.get() == "Year":
-            return 365
-    
+            return 365 * self.repeats.get()
+
     def graph(self):
-        
+        self.graphBTN.focus_set()
+
         self.account.plotBalance = []
         self.account.plotDay = []
-        
+
         length = self.lengthInDays()
         self.account.graphBalance(length)
-        
+
         amounts = self.account.getPlotBalance()
-        days = self.account.getPlotDay()        
-        
+        days = self.account.getPlotDay()
+
         graphWindow = tk.Tk()
         graphWindow.title("Charted Balance")
         chart = infoGraph(graphWindow, amounts, days)
         chart.pack(side="top")
-        
+
         self.initialBalanceOutput.set(self.account.initial_balance)
         self.finalBalanceOutput.set(self.account.balance)
         self.netOutput.set(self.account.getNetOutput())
@@ -386,7 +403,7 @@ class Income(tk.Frame):
         self.timeframeIncomeData.set("Daily")
         self.frequencyIncomeData = tk.IntVar()
         self.frequencyIncomeData.set(1)
-        
+
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)
 
@@ -453,26 +470,26 @@ class infoGraph(tk.Frame):
 
         #[Code here] for mathlib and pandas interaction for graph to appear
         #May need to make an additional frame for displaying the graph, unsure at this current time
-        
+
         self.amounts = amounts
         self.days = days
-        
+
         f = Figure(figsize=(8, 7), dpi=100, frameon=False)
         a = f.add_subplot(111)
         a.set_title("Account Balance Over Time")
         a.set_ylabel("Account Balance ($)")
         a.set_xlabel("Days Elapsed")
         a.plot(self.days, self.amounts)
-        
+
         canvas = FigureCanvasTkAgg(f, master=self)
         canvas.draw()
-        
+
         toolbar = NavigationToolbar2Tk(canvas, self)
         toolbar.update()
-        
+
         canvas.get_tk_widget().pack(side="top", fill="both", expand=1)
         return
-        
+
 #The following class taken from
 #https://blog.tecladocode.com/tkinter-scrollable-frames/
 class ScrollableFrame(ttk.Frame):
