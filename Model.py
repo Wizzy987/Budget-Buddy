@@ -2,6 +2,7 @@ import csv
 
 class BankAccount():
     def __init__(self, *args):
+        #Starting and dynamic variables used for calculations and graphing
         self.balance = 0
         self.initial_balance = 0
         self.goal = 0
@@ -11,6 +12,7 @@ class BankAccount():
         self.plotDay = []
 
     def clear(self):
+        #Function to reset starting/dynamic variables to empty
         self.balance = 0
         self.initial_balance = 0
         self.goal = 0
@@ -48,6 +50,7 @@ class BankAccount():
         return goal
 
     def graphBalance(self, length):
+        #Formulas determining time (x-axis) on the graph depending on user selection
         balance = self.balance
         for days in range(0, length):
             for expense in self.expenses:
@@ -104,6 +107,7 @@ class Model():
         self.account = BankAccount()
 
     def saveCSVFile(self, fileName):
+        #Function for saving budget layout for easy reopening and reviewing budgeting graph. Only .csv (Excel) files are allowed to be saved
         with open(fileName, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
@@ -120,6 +124,7 @@ class Model():
 
 
     def readCSVFile(self, fileName):
+        #Function for loading budget layout for ability to reference saved budget layouts. Account is cleared to prevent conflicts. Only .csv (Excel) files allowed to load
         self.account.clear()
         with open(fileName, 'r', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)

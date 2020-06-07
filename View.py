@@ -7,7 +7,6 @@ class View(tk.Tk):
     """Applications root window"""
 
     def __init__(self, controller=None, account=None, *config):
-        """Code goes here"""
         tk.Tk.__init__(self, *config)
 
         self.title("Budget Buddy")
@@ -16,12 +15,11 @@ class View(tk.Tk):
 
         self.account = account
 
-        #Below is code for the motherFrame
+        #Below is code for the motherFrame (application's skeleton)
         self.motherFrame = tk.Frame(self)
         self.motherFrame.grid(row=0, column=0, columnspan=7)
-        #Need to add all frame classes for each feature into motherFrame
 
-        #Test GUI for graph timeframe
+        #GUI for graph timeframe
         self.timeframeLabel = tk.Label(self, text="Select Time Interval:")
         self.timeframe = tk.StringVar()
         self.timeframe.set("Day")
@@ -29,6 +27,7 @@ class View(tk.Tk):
         self.timeframeLabel.grid(row=2, column=0, sticky="NSEW")
         self.timeframeMenu.grid(row=2, column=1, sticky="NSEW")
 
+        #Repeat section coded to account for multiple days, weeks, months, and years
         self.repeatsLabel = tk.Label(self, text="Repeat Interval:")
         self.repeats = tk.IntVar()
         self.repeats.set(1)
@@ -36,15 +35,17 @@ class View(tk.Tk):
         self.repeatsLabel.grid(row=2, column=2, sticky="NSEW")
         self.repeatsBTN.grid(row=2, column=3, sticky="NSEW")
 
+        #Code for graphing button in the GUI
         self.graphBTN = tk.Button(self, text="Graph", padx=25, pady=15, command=self.graph)
         self.graphBTN.grid(row=3, column=0, columnspan=2, sticky="NSEW")
 
-        #Test GUI for output values
+        #GUI for output values
         self.initialBalanceOutput = tk.IntVar()
         self.finalBalanceOutput = tk.IntVar()
         self.netOutput = tk.IntVar()
         self.goalOutput = tk.IntVar()
 
+        #Next several labels and values included to show user input as well as user output
         self.initialBalanceLabel = tk.Label(self, text="Initial Balance:")
         self.initialBalanceValue = tk.Label(self, textvariable=self.initialBalanceOutput)
         self.initialBalanceLabel.grid(row=4, column=0, sticky="NSEW")
@@ -65,7 +66,6 @@ class View(tk.Tk):
         self.goalOutputLabel.grid(row=4, column=6, sticky="NSEW")
         self.goalOutputValue.grid(row=4, column=7, sticky="NSEW")
 
-        #Test GUI frames for save/load GUI
         self.accountBalanceFrame = currentAndGoalBalance(self.motherFrame, self, padx=25, pady=25)
         self.accountBalanceFrame.grid(row=0, column=0, sticky="NSEW")
 
@@ -95,7 +95,7 @@ class View(tk.Tk):
         self.addIncomeBTN = tk.Button(self.motherFrame, text="Add Income", padx=25, pady=15, command=self.addIncomeFrame)
         self.addIncomeBTN.grid(row=6, column=0, columnspan=2, sticky="NSEW")
 
-        #Menu Stuff
+        #Menu attributes
         menu = tk.Menu(self.motherFrame)
         self.config(menu=menu)
 
@@ -120,6 +120,14 @@ class View(tk.Tk):
                                                                                     " visual representation of how much you would have to spend"
                                                                                     " based on your desired denomination. You are able to save"
                                                                                     " your budget plan as well as open a new one."))
+        helpTab.add_command(label='Application Details', command=lambda: messagebox.askokcancel("Application Details:", "Programmed by Jeremy Nguyen, Jose Rivera,"
+                                                                                                " Alexander Sigarev, and Ryan Wong originally as a group project"
+                                                                                                " for the course CCT211: User Interface Programming, offered at the"
+                                                                                                " University of Toronto. During the COVID-19 outbreak, our group found"
+                                                                                                " that this application would be immensely helpful to others for staying"
+                                                                                                " on top of their finances during the outbreak and anytime afterwards."
+                                                                                                " After numerous bugfixes and improvements, Budget Buddy has been updated"
+                                                                                                " to the current version you are using."))
 
     def new(self):
         #This response-if statement combo is used to make sure users want to make a new file. Can be used for loading files
@@ -138,25 +146,28 @@ class View(tk.Tk):
         return
 
     def save(self):
+        #View portion of code in Model.py relevant to saving user budget layout. Hardcoded to only save as .csv files to prevent possible errors by the user when saving
         f = filedialog.asksaveasfilename(filetypes=[("Excel spreadsheet", "*.csv")], defaultextension=".csv")
         if f:
+            #Calls the save function in controller
             self.controller.save(f)
             messagebox.showinfo("File Save", "Budget saved to " + f)
         return
 
     def load(self):
+        #View portion of code in Model.py relevant to loading user budget layout. Hardcoded to only recognize and load .csv files to add convience for users
         response = messagebox.askyesno("Loading New File", "All unsaved changes will be lost. Load a budget from file?")
         if response:
             f = filedialog.askopenfilename(filetypes=[("Excel spreadsheet", "*.csv")])
             if f:
-                #Calls the load function in controller.
+                #Calls the load function in controller
                 self.controller.load(f)
 
                 #Sets the balance info to the account balance entries
                 self.accountBalanceFrame.currentBalanceData.set(self.account.balance)
                 self.accountBalanceFrame.goalBalanceData.set(self.account.goal)
 
-                #Destroys/Deletes the current income/expense frames in the window.
+                #Destroys/Deletes the current income/expense frames in the window
                 if self.expenses != []:
                     for index in range(0, len(self.expenses)):
                         self.expenses[index].destroy()
@@ -196,6 +207,7 @@ class View(tk.Tk):
                 messagebox.showinfo("File Load", f + " Loaded")
         return
 
+    #Recognizes days/weeks/months/years amount and converting into number of days
     def lengthInDays(self):
         if self.timeframe.get() == "Day":
             return 1 * self.repeats.get()
@@ -206,6 +218,7 @@ class View(tk.Tk):
         elif self.timeframe.get() == "Year":
             return 365 * self.repeats.get()
 
+    #Code for graph output
     def graph(self):
         self.graphBTN.focus_set()
 
@@ -244,6 +257,8 @@ class View(tk.Tk):
         return
 
     def addIncomeFrame(self):
+
+        #Same process for addExpenseFrame just dealing with income instead now
         new = Income(self.incomeFrame.scrollable_frame, self, pady=25, padx=25)
         self.incomes.append(new)
 
@@ -260,19 +275,12 @@ class currentAndGoalBalance(tk.Frame):
 
         self.currentBalanceData = tk.IntVar()
         self.goalBalanceData = tk.IntVar()
-        #^[P.S.:]Keep in mind we may have to change these to StringVar's if we want our users to see commas just for better use
-        #If we end up implementing this, code for adding decimal point at index[-3] and index[-2:].isdigit(), then add commas /
-        #automatically after three numbers inputted
-        #In order to convert these to integers, split the commas and add it to one net float value
-
-        '''^What do you guys think?'''
 
         self.currentBalanceLabel = tk.Label(self, text="Current Balance:")
         self.currentBalanceLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
 
         self.valid = self.register(self._validate)
 
-        #Remember to add _update on these entries like the ones below
         self.currentBalanceEntry = tk.Entry(self, textvariable=self.currentBalanceData, validate="all", validatecommand=(self.valid, "%V"))
         self.currentBalanceEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
@@ -287,8 +295,7 @@ class currentAndGoalBalance(tk.Frame):
         return True
 
     def _validate(self, event):
-        #if event == "key":
-            #print(event)
+        #Ensures validation upon user input
         if event == "focusout":
             self._update()
         return True
@@ -304,8 +311,6 @@ class Expense(tk.Frame):
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
-        #Suggestion: Rename these variable so that: 1. they'll be infinitely easier to type out (cause I'm into copy paste but it's still annoying)
-        #and 2. it'll be easier to make income inherit from this class so that it's easier to just edit income
         self.nameExpenseLabel = tk.Label(self, text="Name")
         self.amountExpenseLabel = tk.Label(self, text="Amount")
         self.timeframeExpenseLabel = tk.Label(self, text="Timeframe")
@@ -326,9 +331,8 @@ class Expense(tk.Frame):
         self.amountExpenseEntry = tk.Entry(self, textvariable=self.amountExpenseData, validate="all", validatecommand=(self.valid, "%V"))
         self.frequencyExpenseEntry = tk.Entry(self, textvariable=self.frequencyExpenseData, validate="all", validatecommand=(self.valid, "%V"))
 
-        #Option Menu is a bit trickier to implement with an update command, so it doesn't have a validate
         self.timeframeExpenseEntry = tk.OptionMenu(self, self.timeframeExpenseData, "Daily", "Weekly", "Monthly", "Yearly")
-        #Instead we just use trace, with a callback
+        #Trace with a callback
         self.timeframeExpenseData.trace("w", self.optionUpdate)
 
 
@@ -358,8 +362,7 @@ class Expense(tk.Frame):
         return True
 
     def _validate(self, event):
-        #if event == "key":
-            #print(event)
+        #Validation for user input
         if event == "focusout":
             self._update()
         return True
@@ -380,11 +383,7 @@ class Expense(tk.Frame):
         self.destroy()
         return
 
-
-#Make this class inherit from Expense. It'll make it easier
-#^ADDENDUM: Not sure exactly what you mean, good news is it appears the GUI is working as intended with this code
-##reference the week 5 lecture slides, since that has all the inheritance stuff in it.
-##inheritance makes the Income class inherit all the methods from Expense. would also allow you to use a generic __init__ so that we only need one
+#Same process as Expense class
 class Income(tk.Frame):
     def __init__(self, parent=None, main=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
@@ -411,9 +410,8 @@ class Income(tk.Frame):
         self.amountIncomeEntry = tk.Entry(self, textvariable=self.amountIncomeData, validate="all", validatecommand=(self.valid, "%V"))
         self.frequencyIncomeEntry = tk.Entry(self, textvariable=self.frequencyIncomeData, validate="all", validatecommand=(self.valid, "%V"))
 
-        #Option Menu is a bit trickier to implement with an update command, so it doesn't have a validate
         self.timeframeIncomeEntry = tk.OptionMenu(self, self.timeframeIncomeData, "Daily", "Weekly", "Monthly", "Yearly")
-        #Instead we just use trace, with a callback
+        #Trace with a callback
         self.timeframeIncomeData.trace("w", self.optionUpdate)
 
         self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
@@ -442,8 +440,7 @@ class Income(tk.Frame):
         return True
 
     def _validate(self, event):
-        #if event == "key":
-            #print(event)
+        #Validation for user input
         if event == "focusout":
             self._update()
         return True
@@ -468,12 +465,10 @@ class infoGraph(tk.Frame):
     def __init__(self, parent=None, amounts=None, days=None, **configs):
         tk.Frame.__init__(self, parent, **configs)
 
-        #[Code here] for mathlib and pandas interaction for graph to appear
-        #May need to make an additional frame for displaying the graph, unsure at this current time
-
         self.amounts = amounts
         self.days = days
 
+        #Graph compenents creation
         f = Figure(figsize=(8, 7), dpi=100, frameon=False)
         a = f.add_subplot(111)
         a.set_title("Account Balance Over Time")
@@ -492,6 +487,7 @@ class infoGraph(tk.Frame):
 
 #The following class taken from
 #https://blog.tecladocode.com/tkinter-scrollable-frames/
+'''Purpose of scrollable frame is for user to be able to clearly review and add as many different expense sources and income sources as they need to'''
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
