@@ -73,6 +73,13 @@ class BankAccount():
                 for income in self.incomes:
                     if income.timeframe == "Monthly":
                         balance += (income.amount*income.frequency)
+            if (days % 365) == 0:
+                for expense in self.expenses:
+                    if expense.timeframe == "Yearly":
+                        balance -= (expense.amount*expense.frequency)
+                for income in self.incomes:
+                    if income.timeframe == "Yearly":
+                        balance += (income.amount*income.frequency)
             self.plotBalance.append(balance)
             self.plotDay.append(days+1)
         return
