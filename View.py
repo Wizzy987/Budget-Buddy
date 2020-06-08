@@ -262,7 +262,7 @@ class View(tk.Tk):
         self.expenses.append(new)
 
         #Adds new to the model
-        self.account.addExpense([new.nameExpenseData.get(), new.amountExpenseData.get(), new.timeframeExpenseData.get(), new.frequencyExpenseData.get()])
+        self.account.addExpense([new.nameData.get(), new.amountData.get(), new.timeframeData.get(), new.frequencyData.get()])
 
         #Grids the expense frame onto the window
         new.pack(side="top", expand="TRUE", fill="both")
@@ -274,7 +274,7 @@ class View(tk.Tk):
         new = Income(self.incomeFrame.scrollable_frame, self, pady=25, padx=25)
         self.incomes.append(new)
 
-        self.account.addIncome([new.nameIncomeData.get(), new.amountIncomeData.get(), new.timeframeIncomeData.get(), new.frequencyIncomeData.get()])
+        self.account.addIncome([new.nameData.get(), new.amountData.get(), new.timeframeData.get(), new.frequencyData.get()])
 
         new.pack(side="top", expand="TRUE", fill="both")
         return
