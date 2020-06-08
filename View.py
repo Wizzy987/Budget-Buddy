@@ -351,17 +351,17 @@ class Expense(tk.Frame):
         self.delete = tk.Button(self, text="Delete", padx=10, command=self.delete)
         self.delete.grid(row=0, column=9, sticky="NE", padx=10)
 
-        self.nameExpenseLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
-        self.nameExpenseEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
+        self.nameLabel.grid(row=0, column=0, sticky="N"+"E"+"S"+"W")
+        self.nameEntry.grid(row=0, column=1, sticky="N"+"E"+"S"+"W")
 
-        self.amountExpenseLabel.grid(row=0, column=2, sticky="N"+"E"+"S"+"W")
-        self.amountExpenseEntry.grid(row=0, column=3, sticky="N"+"E"+"S"+"W")
+        self.amountLabel.grid(row=0, column=2, sticky="N"+"E"+"S"+"W")
+        self.amountEntry.grid(row=0, column=3, sticky="N"+"E"+"S"+"W")
 
-        self.timeframeExpenseLabel.grid(row=0, column=4, sticky="N"+"E"+"S"+"W")
-        self.timeframeExpenseEntry.grid(row=0, column=5, sticky="N"+"E"+"S"+"W")
+        self.timeframeLabel.grid(row=0, column=4, sticky="N"+"E"+"S"+"W")
+        self.timeframeEntry.grid(row=0, column=5, sticky="N"+"E"+"S"+"W")
 
-        self.frequencyExpenseLabel.grid(row=0, column=6, sticky="N"+"E"+"S"+"W")
-        self.frequencyExpenseEntry.grid(row=0, column=7, sticky="N"+"E"+"S"+"W")
+        self.frequencyLabel.grid(row=0, column=6, sticky="N"+"E"+"S"+"W")
+        self.frequencyEntry.grid(row=0, column=7, sticky="N"+"E"+"S"+"W")
 
     def optionUpdate(self, *args):
         self._update()
@@ -382,10 +382,10 @@ class Expense(tk.Frame):
     def dataToList(self):
         data=[]
         #Transfers data as [name, amount, timeframe, frequency]
-        data.append(self.nameExpenseData.get())
-        data.append(self.amountExpenseData.get())
-        data.append(self.timeframeExpenseData.get())
-        data.append(self.frequencyExpenseData.get())
+        data.append(self.nameData.get())
+        data.append(self.amountData.get())
+        data.append(self.timeframeData.get())
+        data.append(self.frequencyData.get())
         return data
 
     def delete(self):
