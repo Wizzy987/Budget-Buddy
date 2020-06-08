@@ -323,10 +323,10 @@ class Expense(tk.Frame):
         #Saves a reference to the root window, added "main=None" to init
         self.rootWin = main
 
-        self.nameLabel = tk.Label(self, text="Name")
-        self.amountLabel = tk.Label(self, text="Amount")
-        self.timeframeLabel = tk.Label(self, text="Timeframe")
-        self.frequencyLabel = tk.Label(self, text="Frequency")
+        self.nameLabel = tk.Label(self, text="Name:")
+        self.amountLabel = tk.Label(self, text="Amount (in $):")
+        self.timeframeLabel = tk.Label(self, text="Timeframe:")
+        self.frequencyLabel = tk.Label(self, text="Frequency:")
 
         self.nameData = tk.StringVar()
         self.amountData = tk.IntVar()
