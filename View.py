@@ -189,8 +189,8 @@ class View(tk.Tk):
 
                     self.expenses[index].nameData.set(self.account.expenses[index].name)
                     self.expenses[index].amountData.set(self.account.expenses[index].amount)
-                    self.expenses[index].timeframeData.set(self.account.expenses[index].timeframe)
                     self.expenses[index].frequencyData.set(self.account.expenses[index].frequency)
+                    self.expenses[index].timeframeData.set(self.account.expenses[index].timeframe)
 
 
                 for index in range(0, len(self.account.incomes)):
@@ -200,8 +200,8 @@ class View(tk.Tk):
 
                     self.incomes[index].nameData.set(self.account.incomes[index].name)
                     self.incomes[index].amountData.set(self.account.incomes[index].amount)
-                    self.incomes[index].timeframeData.set(self.account.incomes[index].timeframe)
                     self.incomes[index].frequencyData.set(self.account.incomes[index].frequency)
+                    self.incomes[index].timeframeData.set(self.account.incomes[index].timeframe)
 
                 #A dialog showing that the requested file has been loaded
                 messagebox.showinfo("File Load", f + " Loaded")
@@ -334,7 +334,7 @@ class Expense(tk.Frame):
 
         self.timeframeData.set("Daily")
         self.frequencyData = tk.IntVar()
-        self.frequencyData.set(1)
+        #self.frequencyData.set(1)
 
         #Added a validation command, which calls an update command to update the same data in self.account
         self.valid = self.register(self._validate)

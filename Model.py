@@ -109,6 +109,13 @@ class Datapoint():
         self.timeframe = data[2]
         self.frequency = data[3]
 
+    def get(self):
+        print("Name:" + self.name)
+        print("Amount:", self.amount)
+        print("Frame:", self.timeframe)
+        print("Frequency:", self.frequency)
+
+
 class Model():
     def __init__(self):
         self.account = BankAccount()
@@ -141,6 +148,7 @@ class Model():
                 if row[0] == "Budget Goal":
                     self.account.setGoal(row[1])
                 if row[0] == "Expense":
+                    print("We loading this:", row[4])
                     self.account.addExpense([row[1], row[2], row[3], row[4]])
                 if row[0] == "Income":
                     self.account.addIncome([row[1], row[2], row[3], row[4]])
