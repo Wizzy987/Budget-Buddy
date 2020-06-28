@@ -52,7 +52,7 @@ class BankAccount():
     def graphBalance(self, length):
         #Formulas determining time (x-axis) on the graph depending on user selection
         balance = self.balance
-        for days in range(0, length):
+        for days in range(1, length+1):
             for expense in self.expenses:
                 if expense.timeframe == "Daily":
                     balance -= (expense.amount*expense.frequency)
@@ -81,7 +81,7 @@ class BankAccount():
                     if income.timeframe == "Weekly":
                         balance += (income.amount*income.frequency)
             self.plotBalance.append(balance)
-            self.plotDay.append(days+1)
+            self.plotDay.append(days)
         return
 
     def getPlotBalance(self):
